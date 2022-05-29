@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% if message %}
+<script>
+	alert('{{ message }}');
+</script>
+{% endif %}
+
+<form action="/postsignIn/" method="post">
+	{% csrf_token %}
+	<br/>
+<!-- Enter Your User name: -->
+	<label for="User">User Name</label>
+	<input type="username"id="username" name="username"><br><br>
+<!-- Enter Your Password: -->
+	<label for="Password">Password</label>
+	<input type="password" id="Password" name="password"><br><br>
+	<input type="submit" value="Login"><br><br>
+	<label>
+	<input type="checkbox" checked="checked" name="remember"> Remember me
+	</label>
+   
+</form>
+<a href="{% url 'car_list' %}">GoBack - Home</a>
+
+{% endblock %}

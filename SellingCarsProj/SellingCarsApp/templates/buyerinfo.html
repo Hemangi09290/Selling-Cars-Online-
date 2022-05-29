@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% if message %}
+<script>
+	alert('{{ message }}');
+</script>
+{% endif %}
+
+<form action="/buy/" method="post">
+	{% csrf_token %}
+	<br/>
+<!-- Enter buyer name: -->
+	<label for="buyername">Name</label>
+	<input type="user" id="buyername" name="buyername"><br><br>
+<!-- Enter Your mobile: -->
+	<label for="Mobile">Mobile</label>
+	<input id="mobile" name="mobile"><br><br>
+	<a href="{% url 'informdealer' id %}">Submit</a><br>
+	
+   
+</form>
+<a href="{% url 'car_list' %}">GoBack - Home</a>
+
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<form method="get">
+  {% csrf_token %}
+  <div>
+    <label for="name">Make:</label>
+    <input type="text" class="form-control" placeholder="Enter Make" id="name" name="make">
+  
+    <label for="date">Year:</label>
+    <select name="year" id="year"></select>
+    <script>
+      var start = 1950;
+      var end = new Date().getFullYear();
+      var options = "";
+      options += "<option value=''>Select Year</option>";
+      for(var year = start ; year <=end; year++){
+        options += "<option>"+ year +"</option>";
+      }
+      document.getElementById("year").innerHTML = options;
+    </script>
+    <button type="submit" id="btnclearfilter">Clear Filters</button>
+    <button type="submit" id="btnapply">Apply Filters</button>
+</div>
+</form>
+<div style="margin-top: 20px;">
+<table border="1" cellspacing="3" cellpadding="3" style="border: 2px solid #1c87c9;">
+  <thead>
+  <tr>
+      <th>Seller Name</th>
+      <th>Seller Mobile</th>
+      <th>Make</th>
+      <th>Model</th>
+      <th>Year</th>
+      <th>Condition</th>
+      <th>Price</th>
+      <th>Sold</th>
+      
+  </tr>
+  </thead>
+  <tbody>
+      {% for carlist in car_list %}
+          <tr>
+              <td>{{ carlist.name }}</td>
+              <td>{{ carlist.mobile }}</td>
+              <td>{{ carlist.make }}</td>
+              <td>{{ carlist.model }}</td>
+              <td>{{ carlist.year }}</td>
+              <td>{{ carlist.condition }}</td>
+              <td>{{ carlist.price }}</td>
+              {% if carlist.is_sold == True %}
+                <td>SOLD</td>
+                <td>N/A</td>
+              {% else %}
+                <td>Avaliable</td>
+                <td><a class="buttonhref" href="{% url 'buyerinfo' carlist.id %}">Buy Car</a></td>
+              {% endif %}
+          </tr>
+          {% empty %}
+          <tr>
+              <td colspan="9">No Data in the database </td>
+          </tr>
+      {% endfor %}
+  </tbody>
+</table>
+</div>
+<div class="pagination">
+  <span class="step-links">
+      {% if page_obj.has_previous %}
+          <a href="?page=1">&laquo; first</a>
+          <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+      {% endif %}
+
+      <span class="current">
+          Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+      </span>
+
+      {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}">next</a>
+          <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+      {% endif %}
+  </span>
+</div>
+
+<br>
+
+<a href="{% url 'addcar' %}" title="Click here to add new car details">List New Car</a>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+   
+{% endblock %}

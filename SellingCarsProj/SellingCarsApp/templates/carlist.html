@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Listing Of Car</h2>
+    <form method="post" enctype="multipart/form-data" id="SellerForm">
+        {% csrf_token %}
+        <table>
+            {{ entry_list.as_table }}
+        </table>
+        <button type="submit">Save</button>
+        <a href="{% url 'home' %}">Nevermind</a>
+    </form>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+   
+{% endblock %}
