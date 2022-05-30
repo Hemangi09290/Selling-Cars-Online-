@@ -9,11 +9,9 @@ urlpatterns = [
     path("thanku/", views.showGreetings, name="greeting"),
     path("buyerinfo/<int:id>/", views.addBuyer, name="buyerinfo"),
     path("sendmail/<int:id>/", views.sendEmail, name="informdealer"),
-    #path("add/", views.getDetailsofCar, name="addcar"),
     path("login/", views.signin, name="login"),
     path("postsignIn/", views.postsignIn, name="postsignIn"),
     path("buy/", views.sendEmail),
-    #path('logout/', views.logout, name="logout"),
     path('logout/', auth_views.LogoutView.as_view(template_name="home.html"), name='logout'),
     
     

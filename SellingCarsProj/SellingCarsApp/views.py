@@ -1,17 +1,14 @@
 from multiprocessing import context
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
-from django.contrib.messages.views import SuccessMessageMixin
-from django.contrib.auth.views import LoginView
+from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
-from django.views.generic.edit import CreateView, FormView, UpdateView
+from django.views.generic.edit import FormView
 from django.views.generic import ListView
-from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import UserForm, SellerForm
 from django.urls import reverse_lazy
 from .models import User, Seller
 import smtplib
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import login
 from django.template.loader import render_to_string
 # Create your views here.
 
@@ -36,23 +33,30 @@ def signin(request):
 def logout(request):
 	return render(request,"Login.html")
 
-
 def showGreetings(request):
     return render(request, "greetings.html")
 
+'''
+This function will display buyer information form 
+when enduser click to Buy car this will be called
+'''
 def addBuyer(request, id):
     context={}
     context["id"] = id
     return render(request, "buyerinfo.html", context)
 
+'''
+This function will send the email to the owner of 
+Doggy brothers i.e Mike with selling car details
+'''
 def sendEmail(request, id):
     getobj = Seller.objects.filter(id=id).first()
     getobj.is_sold = True
     getobj.save()
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.starttls()
-    server.login('mike@example.org', 'mikeymike123')
-    #username: "mike@example.org" password: mikeymike123
+    server.login('digitrix@example.org', 'digitrix123')
+    
     commission = (getobj.price * 5 /100)
     emailValue = "Car Name "+ getobj.make 
     emailValue += "\r\n Car Model:  " + getobj.model
@@ -64,10 +68,14 @@ def sendEmail(request, id):
     emailValue += "\r\n Commission:  "+ str(commission)
     emailValue += "\r\n Net Amount:  "+ str(int(getobj.price) - commission)
     
-    server.sendmail('mike@example.org', 'mehtahemangi09@gmail.com', emailValue)
+    server.sendmail('digitrix@example.org', 'mike@example.org', emailValue)
     print('Mail sent')
     return render(request, "greetings.html")
 
+'''
+This function is for logging in the site
+that is for owner Mike to login the site
+'''
 def postsignIn(request):
 	name=request.POST.get('username')
 	pasw=request.POST.get('password')
@@ -82,7 +90,9 @@ def postsignIn(request):
 		message="Invalid Credentials!!Please ChecK your Data"
 		return render(request,"Login.html",{"message":message})
 		
-
+'''
+This function is to add new car details with its seller name
+'''
 class CarSellerView(FormView):
     form_class = SellerForm
     template_name = 'addcar_details.html'
@@ -93,7 +103,10 @@ class CarSellerView(FormView):
         car_obj.save()
         return HttpResponseRedirect('/')
 
-
+'''
+This function display the List of cars with paging functionality
+it will also display Filter fiunctionality which will be applicable on listing of cars
+'''
 class CarListView(ListView):
     template_name = "home.html"
     context_object_name = "car_list"
