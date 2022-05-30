@@ -60,10 +60,12 @@
 </head>
     <body>
         <h4>WELCOME CAR DEALERSHIP</h4>
-        <div><h5 class="welcomemessage"> {% if name %} Hello "{{name}}" {% endif %}</h5></div>
-            <div class="logindiv"><a class="loginhref" href="/login/">Login</a>    
-        </div>      
-        <a hidden href="{% url 'logout' %}">Logout</a>
+        {% if user.is_authenticated %}
+            <div><h5 class="welcomemessage"> Hello {{ user.username }}</h5></div>
+            <div class="logindiv"><a class="loginhref" href="/logout">Logout</a></div>
+        {% else %}
+        <div class="logindiv"><a class="loginhref" href="/login/">Login</a> </div>
+        {% endif %}
         <hr>
         {% block content %}
         {% endblock %}

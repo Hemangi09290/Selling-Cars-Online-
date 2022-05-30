@@ -12,7 +12,7 @@ urlpatterns = [
     path("login/", views.signin, name="login"),
     path("postsignIn/", views.postsignIn, name="postsignIn"),
     path("buy/", views.sendEmail),
-    path('logout/', auth_views.LogoutView.as_view(template_name="home.html"), name='logout'),
+    path('logout/', views.signoff, name='logout'),
     
     
 

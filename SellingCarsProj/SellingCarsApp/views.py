@@ -7,9 +7,11 @@ from django.views.generic import ListView
 from .forms import UserForm, SellerForm
 from django.urls import reverse_lazy
 from .models import User, Seller
+from django.contrib.auth.models import auth
 import smtplib
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.template.loader import render_to_string
+from django.contrib import sessions
 # Create your views here.
 
 '''
@@ -30,8 +32,9 @@ def getDetailsofCar(request):
 def signin(request):
 	return render(request,"Login.html")
 
-def logout(request):
-	return render(request,"Login.html")
+def signoff(request):
+    logout(request)
+    return HttpResponseRedirect('/')
 
 def showGreetings(request):
     return render(request, "greetings.html")
@@ -51,12 +54,9 @@ Doggy brothers i.e Mike with selling car details
 '''
 def sendEmail(request, id):
     getobj = Seller.objects.filter(id=id).first()
-    getobj.is_sold = True
-    getobj.save()
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.starttls()
     server.login('digitrix@example.org', 'digitrix123')
-    
     commission = (getobj.price * 5 /100)
     emailValue = "Car Name "+ getobj.make 
     emailValue += "\r\n Car Model:  " + getobj.model
@@ -67,8 +67,9 @@ def sendEmail(request, id):
     emailValue += "\r\n Car Price:  "+ str(getobj.price)
     emailValue += "\r\n Commission:  "+ str(commission)
     emailValue += "\r\n Net Amount:  "+ str(int(getobj.price) - commission)
-    
     server.sendmail('digitrix@example.org', 'mike@example.org', emailValue)
+    getobj.is_sold = True
+    getobj.save()
     print('Mail sent')
     return render(request, "greetings.html")
 
@@ -79,10 +80,9 @@ that is for owner Mike to login the site
 def postsignIn(request):
 	name=request.POST.get('username')
 	pasw=request.POST.get('password')
-	user = User.objects.filter(username=name).first()
-	if user is not None:
+	user = auth.authenticate(username=name, password=pasw)
+	if user is not None:        
 		login(request, user)
-		print(request)
 		session_id=str(user.id)
 		request.session['uid']=str(session_id)
 		return HttpResponseRedirect('/')
